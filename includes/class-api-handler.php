@@ -19,7 +19,7 @@ class AIAG_API_Handler {
         if (!$this->api_key) {
             return array(
                 'success' => false,
-                'message' => 'API key not configured'
+                'message' => 'API key not configured. Please add your Claude API key in Settings.'
             );
         }
 
@@ -48,18 +48,32 @@ class AIAG_API_Handler {
         );
 
         if (is_wp_error($response)) {
+            $error_msg = $response->get_error_message();
+            $this->log_error('API Request Error: ' . $error_msg);
             return array(
                 'success' => false,
-                'message' => 'API request failed: ' . $response->get_error_message()
+                'message' => 'API request failed: ' . $error_msg
             );
         }
 
+        $status_code = wp_remote_retrieve_response_code($response);
         $body = json_decode(wp_remote_retrieve_body($response), true);
 
-        if (!isset($body['content'][0]['text'])) {
+        // Check for API error responses
+        if ($status_code !== 200) {
+            $error_message = $body['error']['message'] ?? 'Unknown error';
+            $this->log_error('API Error (Status ' . $status_code . '): ' . $error_message);
             return array(
                 'success' => false,
-                'message' => 'Invalid API response'
+                'message' => 'API Error: ' . $error_message . ' (Status: ' . $status_code . ')'
+            );
+        }
+
+        if (!isset($body['content'][0]['text'])) {
+            $this->log_error('Invalid API response structure: ' . json_encode($body));
+            return array(
+                'success' => false,
+                'message' => 'Invalid API response. Please check your API key and try again.'
             );
         }
 
@@ -67,6 +81,15 @@ class AIAG_API_Handler {
             'success' => true,
             'content' => $body['content'][0]['text']
         );
+    }
+
+    /**
+     * Log errors for debugging
+     */
+    private function log_error($message) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[AIAG Error] ' . $message);
+        }
     }
 
     /**
