@@ -13,6 +13,7 @@ class AIAG_Admin {
         add_action('wp_ajax_aiag_check_plagiarism', array($this, 'handle_plagiarism_check'));
         add_action('wp_ajax_aiag_check_grammar', array($this, 'handle_grammar_check'));
         add_action('wp_ajax_aiag_analyze_content', array($this, 'handle_content_analysis'));
+        add_action('wp_ajax_aiag_test_api', array($this, 'handle_test_api'));
     }
 
     public function add_admin_menu() {
@@ -160,5 +161,29 @@ class AIAG_Admin {
         $result = $analyzer->analyze($content);
 
         wp_send_json_success($result);
+    }
+
+    public function handle_test_api() {
+        check_ajax_referer('aiag_nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Unauthorized');
+        }
+
+        $test_type = sanitize_text_field($_POST['test_type'] ?? 'claude');
+
+        if ($test_type === 'claude') {
+            $result = AIAG_Diagnostics::test_claude_api();
+        } elseif ($test_type === 'unsplash') {
+            $result = AIAG_Diagnostics::test_unsplash_api();
+        } else {
+            wp_send_json_error('Invalid test type');
+        }
+
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result);
+        }
     }
 }

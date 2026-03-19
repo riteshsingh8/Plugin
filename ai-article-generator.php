@@ -30,6 +30,7 @@ require_once AIAG_PLUGIN_DIR . 'includes/class-image-generator.php';
 require_once AIAG_PLUGIN_DIR . 'includes/class-plagiarism-checker.php';
 require_once AIAG_PLUGIN_DIR . 'includes/class-grammar-checker.php';
 require_once AIAG_PLUGIN_DIR . 'includes/class-content-analyzer.php';
+require_once AIAG_PLUGIN_DIR . 'includes/class-diagnostics.php';
 
 // Initialize plugin
 function aiag_init() {

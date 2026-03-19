@@ -43,6 +43,11 @@ $api_key = get_option('aiag_api_key', '');
                     Show API Key
                 </label>
             </div>
+
+            <div class="form-group">
+                <button type="button" class="button button-primary" id="test-claude-api">Test Claude API Connection</button>
+                <div id="api-test-result" style="margin-top: 10px; display: none;"></div>
+            </div>
         </div>
 
         <div class="aiag-card">

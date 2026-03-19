@@ -263,4 +263,53 @@ jQuery(document).ready(function ($) {
             return map[m];
         });
     }
+
+    // Show/hide API key
+    const showKeyCheckbox = document.getElementById('show-api-key');
+    if (showKeyCheckbox) {
+        showKeyCheckbox.addEventListener('change', function() {
+            const input = document.getElementById('aiag-api-key');
+            input.type = this.checked ? 'text' : 'password';
+        });
+    }
+
+    // Test API button
+    const testApiBtn = document.getElementById('test-claude-api');
+    if (testApiBtn) {
+        testApiBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const btn = this;
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Testing...';
+
+            $.ajax({
+                type: 'POST',
+                url: aiagAjax.ajaxurl,
+                data: {
+                    action: 'aiag_test_api',
+                    test_type: 'claude',
+                    _ajax_nonce: aiagAjax.nonce,
+                },
+                success: function(response) {
+                    const resultDiv = document.getElementById('api-test-result');
+                    if (response.success) {
+                        resultDiv.innerHTML = '<div class="aiag-alert alert-success"><strong>✓ Success!</strong> ' + escapeHtml(response.data.message) + '<br/><small>' + escapeHtml(response.data.details) + '</small></div>';
+                    } else {
+                        resultDiv.innerHTML = '<div class="aiag-alert alert-error"><strong>✗ Failed!</strong> ' + escapeHtml(response.data.message) + '<br/><small>' + escapeHtml(response.data.details) + '</small></div>';
+                    }
+                    resultDiv.style.display = 'block';
+                },
+                error: function() {
+                    const resultDiv = document.getElementById('api-test-result');
+                    resultDiv.innerHTML = '<div class="aiag-alert alert-error"><strong>✗ Error:</strong> Failed to connect to test endpoint</div>';
+                    resultDiv.style.display = 'block';
+                },
+                complete: function() {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }
+            });
+        });
+    }
 });
