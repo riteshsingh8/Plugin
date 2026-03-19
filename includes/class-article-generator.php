@@ -117,6 +117,7 @@ class AIAG_Article_Generator {
                     ),
                 )),
                 'timeout' => 30,
+                'sslverify' => false,
             )
         );
 

@@ -39,6 +39,7 @@ class AIAG_Diagnostics {
                     ),
                 )),
                 'timeout' => 30,
+                'sslverify' => false,
             )
         );
 

@@ -44,6 +44,7 @@ class AIAG_API_Handler {
                     ),
                 )),
                 'timeout' => 60,
+                'sslverify' => false,
             )
         );
 
@@ -158,6 +159,7 @@ Format as JSON with array of objects containing 'description' and 'keywords' fie
                     ),
                 )),
                 'timeout' => 60,
+                'sslverify' => false,
             )
         );
 
