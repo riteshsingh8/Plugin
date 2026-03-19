@@ -39,16 +39,19 @@ function aiag_init() {
 add_action('plugins_loaded', 'aiag_init');
 
 // Activation hook
-register_activation_hook(__FILE__, function() {
+function aiag_activate() {
     AIAG_Plugin::activate();
-});
+}
+register_activation_hook(__FILE__, 'aiag_activate');
 
 // Deactivation hook
-register_deactivation_hook(__FILE__, function() {
+function aiag_deactivate() {
     AIAG_Plugin::deactivate();
-});
+}
+register_deactivation_hook(__FILE__, 'aiag_deactivate');
 
 // Uninstall hook
-register_uninstall_hook(__FILE__, function() {
+function aiag_uninstall() {
     AIAG_Plugin::uninstall();
-});
+}
+register_uninstall_hook(__FILE__, 'aiag_uninstall');
